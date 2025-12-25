@@ -23,6 +23,7 @@ python -m venv .venv
 source .venv/bin/activate      # Ubuntu
 pip install -r requirements.txt
 ```
+> Note: The base install targets Python 3.11 (see `runtime.txt`). Spleeter fallback is optional and only installs automatically on Python <3.9 due to TensorFlow wheel availability. Demucs is the primary engine.
 
 ### ffmpeg install
 - **Windows**: Install from https://www.gyan.dev/ffmpeg/builds/ (full build). Add `bin` folder to PATH. Reopen terminal.
@@ -39,6 +40,7 @@ Open the provided local URL in your browser.
 2. In Streamlit Cloud, create a new app pointing to this repo and `app.py`.
 3. The platform will install `ffmpeg` and `libsndfile1` from `packages.txt` and all Python deps from `requirements.txt`.
 4. GPU is not available on Streamlit Cloud, so run in CPU mode (the GPU toggle will be off).
+5. Spleeter fallback is typically not installed on Streamlit Cloud (Python 3.11). Demucs remains the primary engine; optionally run locally with Python 3.8/3.9 if you need Spleeter.
 
 ## Usage
 1. Upload an audio file (shows duration/sample rate/channels).
@@ -67,5 +69,5 @@ Fallback: Spleeter 2-stem only if Demucs fails or weights are unavailable.
 
 ## Limitations
 - Very long or high-sample-rate tracks increase runtime and disk usage.
-- Spleeter fallback is lower quality than Demucs and limited to 2 stems.
+- Spleeter fallback is lower quality than Demucs and limited to 2 stems; it may be unavailable on Python 3.11+ environments such as Streamlit Cloud.
 - This app runs locally; ensure sufficient RAM and disk space in the temp directory.

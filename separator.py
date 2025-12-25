@@ -21,6 +21,10 @@ def _base_command() -> str:
     return shutil.which("python") or "python"
 
 
+def spleeter_available() -> bool:
+    return shutil.which("spleeter") is not None
+
+
 def _select_model(quality: str) -> str:
     quality = quality.lower()
     if quality == "fast":
@@ -94,6 +98,8 @@ def _map_demucs_outputs(stem_dir: Path, stems_mode: str) -> Dict[str, Path]:
 
 
 def run_spleeter(input_wav: Path, output_dir: Path) -> Dict[str, Path]:
+    if not spleeter_available():
+        raise FileNotFoundError("Spleeter is not installed in this environment.")
     output_dir.mkdir(parents=True, exist_ok=True)
     cmd = ["spleeter", "separate", "-o", str(output_dir), "-p", "spleeter:2stems", str(input_wav)]
     log = _run_process(cmd)
@@ -129,9 +135,13 @@ def separate_audio(
             raise
         log_lines.append("Falling back to Spleeter 2-stems")
         engine = "spleeter"
-        spleeter_out = run_spleeter(input_wav, spleeter_dir)
-        log_lines.append(spleeter_out["log"])
-        stems = spleeter_out["stems"]
+        try:
+            spleeter_out = run_spleeter(input_wav, spleeter_dir)
+            log_lines.append(spleeter_out["log"])
+            stems = spleeter_out["stems"]
+        except Exception as spleeter_err:
+            log_lines.append(f"Spleeter fallback failed: {spleeter_err}")
+            raise
     if residual_suppression and "instrumental" in stems and "vocals" in stems:
         cleaned_path = work_dir / "post" / "instrumental_clean.wav"
         audio_utils.suppress_residuals(stems["instrumental"], stems["vocals"], cleaned_path)
