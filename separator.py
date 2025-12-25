@@ -141,7 +141,10 @@ def separate_audio(
             stems = spleeter_out["stems"]
         except Exception as spleeter_err:
             log_lines.append(f"Spleeter fallback failed: {spleeter_err}")
-            raise
+            raise RuntimeError(
+                "Demucs failed and Spleeter fallback is unavailable. "
+                "Install Spleeter if you need the 2-stem fallback."
+            ) from spleeter_err
     if residual_suppression and "instrumental" in stems and "vocals" in stems:
         cleaned_path = work_dir / "post" / "instrumental_clean.wav"
         audio_utils.suppress_residuals(stems["instrumental"], stems["vocals"], cleaned_path)

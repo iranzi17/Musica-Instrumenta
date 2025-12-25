@@ -1,9 +1,7 @@
-streamlit
-demucs
-torch
-torchaudio
-soundfile
-numpy
-# Optional Spleeter fallback (requires Python <3.9 due to TensorFlow wheels)
-spleeter; python_version 
-tensorflow; python_version < "3.9"
+streamlit==1.32.0
+demucs==4.0.1
+torch==2.5.1
+torchaudio==2.5.1
+soundfile==0.12.1
+numpy==1.26.4
+# Optional Spleeter fallback is omitted by default for Cloud compatibility.
